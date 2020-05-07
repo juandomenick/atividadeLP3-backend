@@ -22,17 +22,46 @@
         - Vai instalar as dependencias necessárias para usar as bibliotecas do Postgres;
     
     Passo 6
-        Crie o arquivo 'database.js';
-        Vá para ele;
+        Crie o arquivo 'database.js' para praticar os métodos de BD caso queira
+    
+    Passo 7
+        Instanciar a constante Pool "const Pool = require('pg').Pool";
+        Essa constante Pool gerencia e controla todas as requisições de conexão com o Banco de Dados;
+
+    Passo 8
+        Instanciar a constante pool
+        Essa constante pool gerencia e controla a conexão com o Banco;
+        Ela armazena todas as informações necessárias para conectar no banco
+            ou seja, todas as requisições feitas (SELECT, INSERT, UPDATE, DELETE, etc...) precisam ser feitas conexões ao banco
+            e para isso é necessário em todas as vezes fazer essa validação no banco, como se fosse varios logins;
+
+    Passo 9 
+        Criar os metodos usando a function 'query' de pool (SELECT, INSERT, UPDATE, DELETE)
+        - sql_create_table_clientes ( SQL que cria a tabela 'clientes' que eu escolhi para atividade)
+
 */
 
-// Constante que requisita a biblioteca express
 const express = require('express');
 
-// Constante que instancia as funções HTTP da biblioteca express
 const server = express();
 
-// Array de lista de clientes 
+const Pool = require('pg').Pool
+
+const pool = new Pool({
+
+    user: 'fvlntcvvnbveww',
+    password: '6d9eae92de5b88f3e9f7e7917c67a691e29fe0f01dc66b6afad6101161710f3c',
+    host: 'ec2-34-204-22-76.compute-1.amazonaws.com',
+    database: 'dbnjb43q0fn0s1',
+    port: 5432,
+    ssl: {
+        rejectUnauthorized: false
+    }
+
+})
+
+// Array de lista de clientes
+// Variavel que será utilizada para manipulação de dados voláteis
 var clientes = [
     {
         id: 1,
@@ -71,40 +100,39 @@ var clientes = [
     },
 ];
 
-// Array de lista de produtos 
-var produtos = [
-    {
-        id:1,
-        nome: 'Computador',
-        preco: 1200.20
-    },
-    {
-        id:2,
-        nome:'Mouse',
-        preco: 20.50
-    },
-    {
-        id:3,
-        nome:'Teclado',
-        preco: 75.50
-    },
-    {
-        id:4,
-        nome:'Monitor',
-        preco: 292.50
-    },
-];
+// Sql de criação da tabela de clientes no BD
+const sql_create_table_clientes = `
+    CREATE TABLE IF NOT EXISTS clientes
+    (
+        id serial primary key,
+        nome varchar(255) null,
+        email varchar(255) null,
+        telefone varchar(255) null
 
-// Array de Arrays que armazena os outros dois Arrays 
-var todos = [
-    {
-        clientes: clientes,
-    },
+    )
+`;
+
+pool.query(sql_create_table_clientes, (error, result) => {
+    if(error)
+        throw error
     
-    {
-        produtos:produtos
-    }
-];
+    console.log('Tabela criada com sucesso!');
+})
+
+// Sql de inserção de cliente
+const sql_insert_cliente = `
+        INSERT INTO clientes
+            VALUES
+                ('Juan Domenick', 'juan@raizessolucoes.com.br', '3236-4156'),
+                ('André Bento', 'andre@raizessolucoes.com.br', '4002-8922')
+`;
+
+// pool.query(sql_insert_cliente, (error, result) => {
+//     if(error)
+//         throw error
+    
+//     console.log('Tabela criada com sucesso!');
+// })
 
 /* 
 * GET
@@ -121,14 +149,10 @@ server.get('/', (req, res) => {
     <p>Memória Volátil;</p>
     <ul>
         <li><a href='/clientes'>Clientes</a></li>
-        <li><a href='/produtos'>Produtos</a></li>
-        <li><a href='/todos'>Todos</a></li>
     </ul>
     <p>Banco de Dados;</p>
     <ul>
         <li><a href='/bd/clientes'>Clientes</a></li>
-        <li><a href='/bd/produtos'>Produtos</a></li>
-        <li><a href='/bd/todos'>Todos</a></li>
     </ul>
     <footer>
         <p>Powered by: Juan Domenick</p>
@@ -140,6 +164,7 @@ server.get('/', (req, res) => {
 * GET
 * /clientes - Lista todos os dados do array de clientes
 * 
+* data local
 * return JSON
 */
 server.get('/clientes', (req, res) => {
@@ -148,25 +173,22 @@ server.get('/clientes', (req, res) => {
 
 /* 
 * GET
-* /produtos - Lista todos os dados do array de produtos
+* /clientes - Lista todos os dados do array de clientes
 * 
+* data BD
 * return JSON
 */
-server.get('/produtos', (req, res) => {
-    return res.json(produtos);
+server.get('/bd/clientes', (req, res) => {
+    return res.json(clientes);
 })
 
+
 /* 
-* GET
+* POST
 * /todos - Lista todos os dados do array de arrays de dados
 * 
 * return JSON
 */
-server.get('/todos', (req, res) => {
-    return res.json(todos);
-})
-
-
 server.get('/clientes/:id', (req, res) => {
     const id = req.params.id;
 

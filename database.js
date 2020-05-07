@@ -40,6 +40,13 @@ const sql_create_table_clientes = `
     )
 `;
 
+pool.query(sql_create_table_clientes, (error, result) => {
+    if(error)
+        throw error
+    
+    console.log('Tabela criada com sucesso!');
+})
+
 const sql_insert_cliente = `
         INSERT INTO clientes
             VALUES
