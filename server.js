@@ -1,40 +1,43 @@
+/*
+    Passo 1
+        Digitar 'yarn' no terminal
+        - Vai instalar todas as dependencias requisitadas no package.json
+
+    Passo 2
+        Digitar 'yarn dev' no terminal
+        - Vai iniciar a atualização automatica no servidor conforme a atualização do documento JS
+
+    Passo 3
+        Criar uma variável Array de objetos com alguns dados 
+
+    Passo 4
+        Criar todos os métodos de requisições HTTP
+        GET - Le uma determinada resposta
+        POST - Inserir um objeto novo
+        UPDATE - Edita um dos objetos
+        DELETE - Exclui do Array de objetos, um objeto
+*/
+
 const express = require('express');
 
 const server = express();
 
 // Array de lista de produtos 
-var produtos = [
+var clientes = [
     {
-        id:1,
+        id: 1,
         nome: 'Computador',
         preco: 1200.20
-    },
-    {
-        id:2,
-        nome:'Mouse',
-        preco: 20.50
-    },
-    {
-        id:3,
-        nome:'Teclado',
-        preco: 75.50
-    },
-    {
-        id:4,
-        nome:'Monitor',
-        preco: 292.50
-    },
+    }
 ];
 
-// // Middlewares
-// server.use(express.json())
 
 server.get('/produtos', (req, res) => {
     return res.json(produtos);
 })
 
 server.get('/', (req, res) => {
-    return res.send('Hello World !');
+    return res.send('Pedro gay kkkkk !');
 })
 
 server.get('/produtos/:id', (req, res) => {
