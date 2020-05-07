@@ -1,25 +1,35 @@
 /*
     Passo 1
         Digitar 'yarn' no terminal
-        - Vai instalar todas as dependencias requisitadas no package.json
+        - Vai instalar todas as dependencias requisitadas no package.json;
 
     Passo 2
         Digitar 'yarn dev' no terminal
-        - Vai iniciar a atualização automatica no servidor conforme a atualização do documento JS
+        - Vai iniciar a atualização automatica no servidor conforme a atualização do documento JS;
 
     Passo 3
-        Criar uma variável Array de objetos com alguns dados 
+        Criar uma variável Array de objetos com alguns dados;
 
     Passo 4
-        Criar todos os métodos de requisições HTTP
-        GET - Le uma determinada resposta
-        POST - Inserir um objeto novo
-        PUT - Edita um dos objetos
-        DELETE - Exclui do Array de objetos, um objeto
+        Criar todos os métodos de requisições HTTP;
+            GET     - Le uma determinada resposta;
+            POST    - Inserir um objeto novo;
+            PUT     - Edita um dos objetos;
+            DELETE  - Exclui do Array de objetos, um objeto;
+    
+    Passo 5 
+        Digitar 'yarn add pg' no terminal 
+        - Vai instalar as dependencias necessárias para usar as bibliotecas do Postgres;
+    
+    Passo 6
+        Crie o arquivo 'database.js';
+        Vá para ele;
 */
 
+// Constante que requisita a biblioteca express
 const express = require('express');
 
+// Constante que instancia as funções HTTP da biblioteca express
 const server = express();
 
 // Array de lista de clientes 
@@ -85,7 +95,8 @@ var produtos = [
     },
 ];
 
-todos = [
+// Array de Arrays que armazena os outros dois Arrays 
+var todos = [
     {
         clientes: clientes,
     },
@@ -95,16 +106,29 @@ todos = [
     }
 ];
 
+/* 
+* GET
+* home - Lista todos os links das outras requisições GET
+* 
+* return HTML
+*/
 server.get('/', (req, res) => {
 
     return res.send(`
     <h3>Bem vindo ao projeto de LP3</h3>
     <br>
     <p>Selecione o que voce procura:</p>
+    <p>Memória Volátil;</p>
     <ul>
         <li><a href='/clientes'>Clientes</a></li>
         <li><a href='/produtos'>Produtos</a></li>
         <li><a href='/todos'>Todos</a></li>
+    </ul>
+    <p>Banco de Dados;</p>
+    <ul>
+        <li><a href='/bd/clientes'>Clientes</a></li>
+        <li><a href='/bd/produtos'>Produtos</a></li>
+        <li><a href='/bd/todos'>Todos</a></li>
     </ul>
     <footer>
         <p>Powered by: Juan Domenick</p>
@@ -112,14 +136,32 @@ server.get('/', (req, res) => {
     `);
 })
 
+/* 
+* GET
+* /clientes - Lista todos os dados do array de clientes
+* 
+* return JSON
+*/
 server.get('/clientes', (req, res) => {
     return res.json(clientes);
 })
 
+/* 
+* GET
+* /produtos - Lista todos os dados do array de produtos
+* 
+* return JSON
+*/
 server.get('/produtos', (req, res) => {
     return res.json(produtos);
 })
 
+/* 
+* GET
+* /todos - Lista todos os dados do array de arrays de dados
+* 
+* return JSON
+*/
 server.get('/todos', (req, res) => {
     return res.json(todos);
 })
