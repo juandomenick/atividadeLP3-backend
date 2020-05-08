@@ -1,44 +1,44 @@
 /*
-    Passo 1
-        Digitar 'yarn' no terminal
-        - Vai instalar todas as dependencias requisitadas no package.json;
-
-    Passo 2
-        Digitar 'yarn dev' no terminal
-        - Vai iniciar a atualização automatica no servidor conforme a atualização do documento JS;
-
-    Passo 3
-        Criar uma variável Array de objetos com alguns dados;
-
-    Passo 4
-        Criar todos os métodos de requisições HTTP;
-            GET     - Le uma determinada resposta;
-            POST    - Inserir um objeto novo;
-            PUT     - Edita um dos objetos;
-            DELETE  - Exclui do Array de objetos, um objeto;
-    
-    Passo 5 
-        Digitar 'yarn add pg' no terminal 
-        - Vai instalar as dependencias necessárias para usar as bibliotecas do Postgres;
-    
-    Passo 6
-        Crie o arquivo 'database.js' para praticar os métodos de BD caso queira
-    
-    Passo 7
-        Instanciar a constante Pool "const Pool = require('pg').Pool";
-        Essa constante Pool gerencia e controla todas as requisições de conexão com o Banco de Dados;
-
-    Passo 8
-        Instanciar a constante pool
-        Essa constante pool gerencia e controla a conexão com o Banco;
-        Ela armazena todas as informações necessárias para conectar no banco
-            ou seja, todas as requisições feitas (SELECT, INSERT, UPDATE, DELETE, etc...) precisam ser feitas conexões ao banco
-            e para isso é necessário em todas as vezes fazer essa validação no banco, como se fosse varios logins;
-
-    Passo 9 
-        Criar os metodos usando a function 'query' de pool (SELECT, INSERT, UPDATE, DELETE)
-        - sql_create_table_clientes ( SQL que cria a tabela 'clientes' que eu escolhi para atividade)
-
+*   Passo 1
+*       Digitar 'yarn' no terminal
+*       - Vai instalar todas as dependencias requisitadas no package.json;
+*
+*   Passo 2
+*       Digitar 'yarn dev' no terminal
+*       - Vai iniciar a atualização automatica no servidor conforme a atualização do documento JS;
+*
+*   Passo 3
+*       Criar uma variável Array de objetos com alguns dados;
+*
+*   Passo 4
+*       Criar todos os métodos de requisições HTTP;
+*           GET     - Le uma determinada resposta;
+*           POST    - Inserir um objeto novo;
+*           PUT     - Edita um dos objetos;
+*           DELETE  - Exclui do Array de objetos, um objeto;
+*   
+*   Passo 5 
+*       Digitar 'yarn add pg' no terminal 
+*       - Vai instalar as dependencias necessárias para usar as bibliotecas do Postgres;
+*   
+*   Passo 6
+*       Crie o arquivo 'database.js' para praticar os métodos de BD caso queira
+*   
+*   Passo 7
+*       Instanciar a constante Pool "const Pool = require('pg').Pool";
+*       Essa constante Pool gerencia e controla todas as requisições de conexão com o Banco de Dados;
+*
+*   Passo 8
+*       Instanciar a constante pool
+*       Essa constante pool gerencia e controla a conexão com o Banco;
+*       Ela armazena todas as informações necessárias para conectar no banco
+*           ou seja, todas as requisições feitas (SELECT, INSERT, UPDATE, DELETE, etc...) precisam ser feitas conexões ao banco
+*           e para isso é necessário em todas as vezes fazer essa validação no banco, como se fosse varios logins;
+*
+*   Passo 9 
+*       Criar os metodos usando a function 'query' de pool (SELECT, INSERT, UPDATE, DELETE)
+*       - sql_create_table_clientes ( SQL que cria a tabela 'clientes' que eu escolhi para atividade)
+*
 */
 
 const express = require('express');
@@ -111,7 +111,6 @@ const sql_create_table_clientes = `
 
     )
 `;
-
 pool.query(sql_create_table_clientes, (error, result) => {
     if(error)
         throw error
@@ -119,20 +118,6 @@ pool.query(sql_create_table_clientes, (error, result) => {
     console.log('Tabela criada com sucesso!');
 })
 
-// Sql de inserção de cliente
-const sql_insert_cliente = `
-        INSERT INTO clientes
-            VALUES
-                ('Juan Domenick', 'juan@raizessolucoes.com.br', '3236-4156'),
-                ('André Bento', 'andre@raizessolucoes.com.br', '4002-8922')
-`;
-
-// pool.query(sql_insert_cliente, (error, result) => {
-//     if(error)
-//         throw error
-    
-//     console.log('Tabela criada com sucesso!');
-// })
 
 /* 
 * GET
@@ -160,33 +145,38 @@ server.get('/', (req, res) => {
     `);
 })
 
+
 /* 
 * GET
-* /clientes - Lista todos os dados do array de clientes
+* /clientes - Lista todos os clientes do array de clientes
 * 
 * data local
 * return JSON
 */
-server.get('/clientes', (req, res) => {
-    return res.json(clientes);
+server.get('/clientes', (request, response) => {
+    return response.json(clientes);
 })
+
 
 /* 
 * GET
-* /clientes - Lista todos os dados do array de clientes
+* /clientes - Lista todos os clientes do banco de dados
 * 
 * data BD
 * return JSON
 */
-server.get('/bd/clientes', (req, res) => {
-    return res.json(clientes);
+server.get('/bd/clientes', async (request, response) => {
+    const result = await pool.query('SELECT * FROM clientes');
+    return response.json(result.rows);
 })
 
 
 /* 
-* POST
-* /todos - Lista todos os dados do array de arrays de dados
+* GET
+* /clientes/:id - Mostra o cliente passado por parametro do Array
 * 
+* param INT :id
+* data local
 * return JSON
 */
 server.get('/clientes/:id', (req, res) => {
@@ -197,13 +187,23 @@ server.get('/clientes/:id', (req, res) => {
     return res.json(cliente);   
 })
 
-server.get('/produtos/:id', (req, res) => {
+/* 
+* GET
+* /clientes/:id - Mostra o cliente passado por parametro do Banco de dados
+* 
+* param INT :id
+* data BD
+* return JSON
+*/
+server.get('/bd/clientes/:id', (req, res) => {
     const id = req.params.id;
 
-    const produto = produtos.filter(p => p.id == id);
+    const cliente = clientes.filter(p => p.id == id);
 
-    return res.json(produto);   
+    return res.json(cliente);   
 })
+
+
 
 server.post('/clientes', (req, res) => {
     const cliente = req.body;
@@ -213,36 +213,47 @@ server.post('/clientes', (req, res) => {
     return res.status(201).send();
 })
 
-server.post('/produtos', (req, res) => {
-    const produto = req.body;
+server.post('/bd/clientes', (req, res) => {
+    // Sql de inserção de cliente
+    const sql_insert_cliente = `
+            INSERT INTO clientes
+                VALUES
+                    ('Juan Domenick', 'juan@raizessolucoes.com.br', '3236-4156'),
+                    ('André Bento', 'andre@raizessolucoes.com.br', '4002-8922')
+    `;
 
-    produtos.push(produto);
+    // pool.query(sql_insert_cliente, (error, result) => {
+    //     if(error)
+    //         throw error
+        
+    //     console.log('Tabela criada com sucesso!');
+    // })
 
-    return res.status(201).send();
 })
 
-server.delete('/clientes/:id', (req, res) => {
-    const id = req.params.id;
+
+// server.delete('/clientes/:id', (req, res) => {
+//     const id = req.params.id;
     
-    clientes = clientes.filter(p => p.id != id);
+//     clientes = clientes.filter(p => p.id != id);
 
-    return res.status(200).send()
-})
+//     return res.status(200).send()
+// })
 
-server.put('/clientes/:id', (req, res) => {
-    const id = req.params.id;
-    const produto = req.body;
+// server.put('/clientes/:id', (req, res) => {
+//     const id = req.params.id;
+//     const produto = req.body;
 
-    clientes.forEach(p => {
+//     clientes.forEach(p => {
 
-        if(p.id == id){
-            p.nome = produto.nome;
-            p.preco = produto.preco;
-            return;
-        }
-    })
+//         if(p.id == id){
+//             p.nome = produto.nome;
+//             p.preco = produto.preco;
+//             return;
+//         }
+//     })
 
-    return res.send();
-})
+//     return res.send();
+// })
 
 server.listen(process.env.PORT || 3000);
