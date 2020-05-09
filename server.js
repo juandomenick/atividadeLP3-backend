@@ -207,27 +207,26 @@ server.delete('/tipos/:id', (request, response) => {
 
 /* 
 * PUT
-* /tipos/:id - Deleta o tipo passado por parametro do Array
+* /tipos/:id - Edita o tipo passado por parametro do Array
 * 
 * param INT :id
 * data local
 * return status
 */
-// server.put('/clientes/:id', (request, response) => {
-//     const id = request.params.id;
-//     const produto = request.body;
+server.put('/tipos/:id', (request, response) => {
+    const id = request.params.id;
+    const tipo = request.body;
 
-//     clientes.forEach(p => {
+    tipos.forEach(p => {
+        if(p.id == id){
+            p.nome = tipo.nome;
+            p.preco = tipo.preco;
+            return;
+        }
+    })
 
-//         if(p.id == id){
-//             p.nome = produto.nome;
-//             p.preco = produto.preco;
-//             return;
-//         }
-//     })
-
-//     return response.send();
-// })
+    return response.send();
+})
 
 
 // -----------------------------------------------------------------------
@@ -256,37 +255,42 @@ server.get('/pratos', async (request, response) => {
 * data BD
 * return JSON
 */
-server.get('/pratos/:id', (request, response) => {
-    const id = request.params.id;
+server.get('/pratos/:id', async (request, response) => {
 
-    const prato = pratos.filter(t => t.id == id);
+    // Dados passado como parametro
+    var id = request.params.id;
 
-    return response.json(prato);   
+    // Comando SQL 
+    let sql = 'SELECT * FROM pratos p WHERE p.id = $1';
+
+    // Executa passando o comando do SQL e o dados necessários
+    var result = await pool.query(sql, [id]);
+
+    return response.json(result.rows);   
 })
 
 
 /* 
 * POST
-* /tipos- Cria um novo tipo no Array de tipos
+* /pratos- Cria um novo tipo no Array de pratos
 * 
-* data local
+* data BD
 * return status
 */
-server.post('/tipos', (request, response) => {
-    // Sql de inserção de cliente
-    const sql_insert_cliente = `
-            INSERT INTO pratos 
-                VALUES
-                    ($1, $2)
-    `;
+server.post('/pratos', async (request, response) => {
 
-    // pool.query(sql_insert_cliente, (error, result) => {
-    //     if(error)
-    //         throw error
-        
-    //     console.log('Tabela criada com sucesso!');
-    // })
+    // Dados passado no body da requisição 
+    var nome  = request.body.nome;
+    var tipo  = request.body.tipo;
+    var preco = request.body.preco;
 
+    // Comando SQL 
+    let sql = 'INSERT INTO pratos (nome, tipo, preco) VALUES ($1, $2, $3)';
+
+    // Executa passando o comando do SQL e o dados necessários
+    var result = await pool.query(sql, [nome, tipo, preco]);
+
+    return response.status(201).send();
 })
 
 
