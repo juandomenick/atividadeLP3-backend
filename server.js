@@ -37,7 +37,7 @@
 *
 *   Passo 9 
 *       Criar os metodos usando a function 'query' de pool (SELECT, INSERT, UPDATE, DELETE)
-*       - sql_create_table_clientes ( SQL que cria a tabela 'clientes' que eu escolhi para atividade)
+*       - sql_create_table_pratos ( SQL que cria a tabela 'pratos' que eu escolhi para atividade)
 *
 */
 
@@ -60,64 +60,55 @@ const pool = new Pool({
 
 })
 
-// Array de lista de clientes
+// Array de lista de tipos
 // Variavel que será utilizada para manipulação de dados voláteis
-var clientes = [
+var tipos = [
     {
         id: 1,
-        nome: 'Juan Domenick',
-        email: 'juandomenick12@gmail.com',
-        telefone: '(17) 99264-1760',
+        nome: 'Lanches'
 
     },
     {
         id: 2,
-        nome: 'Ramon Domenick',
-        email: 'ramondfernandes@gmail.com',
-        telefone: '(17) 99265-0000',
+        nome: 'Massas'
 
     },
     {
         id: 3,
-        nome: 'André Lomba',
-        email: 'landrelomba@gmail.com',
-        telefone: '(17) 99115-9999',
-
-    },
-    {
-        id: 4,
-        nome: 'Jean Zago',
-        email: 'jeancarlosramos@gmail.com',
-        telefone: '(17) 99255-6487',
-
-    },
-    {
-        id: 5,
-        nome: 'Pedro Carlos',
-        email: 'zagootacu@gmail.com',
-        telefone: '(17) 4002-8922',
+        nome: 'Pizzas'
 
     },
 ];
 
-// Sql de criação da tabela de clientes no BD
-const sql_create_table_clientes = `
-    CREATE TABLE IF NOT EXISTS clientes
+
+// Sql de criação da tabela de pratos no BD
+const sql_create_table_pratos = `
+    CREATE TABLE IF NOT EXISTS pratos
     (
         id serial primary key,
         nome varchar(255) null,
-        email varchar(255) null,
-        telefone varchar(255) null
+        tipo varchar(255) null,
+        preco float(11) null
 
     )
 `;
-pool.query(sql_create_table_clientes, (error, result) => {
+pool.query(sql_create_table_pratos, (error, result) => {
     if(error)
         throw error
     
     console.log('Tabela criada com sucesso!');
 })
 
+// Sql de exclusão da tabela de pratos no BD
+// const sql_DROP_table_pratos = `
+//     DROP TABLE pratos
+// `;
+// pool.query(sql_DROP_table_pratos, (error, result) => {
+//     if(error)
+//         throw error
+    
+//     console.log('Tabela excluida com sucesso!');
+// })
 
 /* 
 * GET
@@ -129,15 +120,15 @@ server.get('/', (req, res) => {
 
     return res.send(`
     <h3>Bem vindo ao projeto de LP3</h3>
-    <br>
+    <h3>Menu de Lanchonete</h3>
     <p>Selecione o que voce procura:</p>
-    <p>Memória Volátil;</p>
+    <p>Memória Volátil; (Dados armazenado num Array)</p>
     <ul>
-        <li><a href='/clientes'>Clientes</a></li>
+        <li><a href='/tipos'>Tipos de Pratos</a></li>
     </ul>
-    <p>Banco de Dados;</p>
+    <p>Banco de Dados; (Dados salvos no banco de dados Heroku)</p>
     <ul>
-        <li><a href='/bd/clientes'>Clientes</a></li>
+        <li><a href='/bd/pratos'>Pratos</a></li>
     </ul>
     <footer>
         <p>Powered by: Juan Domenick</p>
@@ -148,67 +139,74 @@ server.get('/', (req, res) => {
 
 /* 
 * GET
-* /clientes - Lista todos os clientes do array de clientes
+* /tipos - Lista todos os tipos do array de tipos
 * 
 * data local
 * return JSON
 */
-server.get('/clientes', (request, response) => {
-    return response.json(clientes);
+server.get('/tipos', (request, response) => {
+    return response.json(tipos);
 })
 
 
 /* 
 * GET
-* /clientes - Lista todos os clientes do banco de dados
+* /pratos - Lista todos os pratos do banco de dados
 * 
 * data BD
 * return JSON
 */
-server.get('/bd/clientes', async (request, response) => {
-    const result = await pool.query('SELECT * FROM clientes');
+server.get('/pratos', async (request, response) => {
+    const result = await pool.query('SELECT * FROM pratos');
     return response.json(result.rows);
 })
 
 
 /* 
 * GET
-* /clientes/:id - Mostra o cliente passado por parametro do Array
+* /tipos/:id - Mostra o tipo passado por parametro do Array
 * 
 * param INT :id
 * data local
 * return JSON
 */
-server.get('/clientes/:id', (req, res) => {
+server.get('/tipos/:id', (req, res) => {
     const id = req.params.id;
 
-    const cliente = clientes.filter(p => p.id == id);
+    const tipo = tipos.filter(p => p.id == id);
 
-    return res.json(cliente);   
+    return res.json(tipos);   
 })
+
 
 /* 
 * GET
-* /clientes/:id - Mostra o cliente passado por parametro do Banco de dados
+* /pratos/:id - Mostra o prato passado por parametro do Banco de dados
 * 
 * param INT :id
 * data BD
 * return JSON
 */
-server.get('/bd/clientes/:id', (req, res) => {
+server.get('/pratos/:id', (req, res) => {
     const id = req.params.id;
 
-    const cliente = clientes.filter(p => p.id == id);
+    const prato = pratos.filter(p => p.id == id);
 
-    return res.json(cliente);   
+    return res.json(prato);   
 })
 
 
+/* 
+* POST
+* /tipos- Cria um novo tipo no Array de tipos
+* 
+* data local
+* return status
+*/
+server.post('/tipos', (req, res) => {
+    const tipo = req.body;
 
-server.post('/clientes', (req, res) => {
-    const cliente = req.body;
-
-    clientes.push(cliente);
+    tipos.push(tipo);
 
     return res.status(201).send();
 })
