@@ -65,19 +65,16 @@ const pool = new Pool({
 var tipos = [
     {
         id: 1,
-        nome: 'Lanches'
-
+        nome: "Lanches"
     },
     {
         id: 2,
-        nome: 'Massas'
-
+        nome: "Massas"
     },
     {
         id: 3,
-        nome: 'Pizzas'
-
-    },
+        nome: "Pizzas"
+    }
 ];
 
 
@@ -110,6 +107,18 @@ pool.query(sql_create_table_pratos, (error, result) => {
 //     console.log('Tabela excluida com sucesso!');
 // })
 
+
+// Comando que permite que o corpo da requisição seja em formato JSON
+server.user(express.json());
+
+
+
+
+
+
+
+
+
 /* 
 * GET
 * home - Lista todos os links das outras requisições GET
@@ -128,7 +137,7 @@ server.get('/', (req, res) => {
     </ul>
     <p>Banco de Dados; (Dados salvos no banco de dados Heroku)</p>
     <ul>
-        <li><a href='/bd/pratos'>Pratos</a></li>
+        <li><a href='/pratos'>Pratos</a></li>
     </ul>
     <footer>
         <p>Powered by: Juan Domenick</p>
@@ -153,13 +162,15 @@ server.get('/tipos', (request, response) => {
 * GET
 * /pratos - Lista todos os pratos do banco de dados
 * 
-* data BD
+* data bd
 * return JSON
 */
 server.get('/pratos', async (request, response) => {
-    const result = await pool.query('SELECT * FROM pratos');
+    const result = await pool.query('SELECT * FROM pratos')
     return response.json(result.rows);
 })
+
+
 
 
 /* 
@@ -170,12 +181,12 @@ server.get('/pratos', async (request, response) => {
 * data local
 * return JSON
 */
-server.get('/tipos/:id', (req, res) => {
-    const id = req.params.id;
+server.get('/tipos/:id', (request, response) => {
+    const id = request.params.id;
 
-    const tipo = tipos.filter(p => p.id == id);
+    const tipo = tipos.filter(t => t.id == id);
 
-    return res.json(tipos);   
+    return response.json(tipo);   
 })
 
 
@@ -187,12 +198,12 @@ server.get('/tipos/:id', (req, res) => {
 * data BD
 * return JSON
 */
-server.get('/pratos/:id', (req, res) => {
-    const id = req.params.id;
+server.get('/pratos/:id', (request, response) => {
+    const id = request.params.id;
 
-    const prato = pratos.filter(p => p.id == id);
+    const prato = pratos.filter(t => t.id == id);
 
-    return res.json(prato);   
+    return response.json(prato);   
 })
 
 
@@ -203,21 +214,20 @@ server.get('/pratos/:id', (req, res) => {
 * data local
 * return status
 */
-server.post('/tipos', (req, res) => {
-    const tipo = req.body;
+server.post('/tipos', (request, response) => {
+    const tipo = request.body;
 
     tipos.push(tipo);
 
-    return res.status(201).send();
+    return response.status(201).send();
 })
 
-server.post('/bd/clientes', (req, res) => {
+server.post('/tipos', (request, response) => {
     // Sql de inserção de cliente
     const sql_insert_cliente = `
-            INSERT INTO clientes
+            INSERT INTO pratos 
                 VALUES
-                    ('Juan Domenick', 'juan@raizessolucoes.com.br', '3236-4156'),
-                    ('André Bento', 'andre@raizessolucoes.com.br', '4002-8922')
+                    ($1, $2)
     `;
 
     // pool.query(sql_insert_cliente, (error, result) => {
