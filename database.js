@@ -29,27 +29,130 @@ const pool = new Pool({
 
 })
 
-const sql_create_table_clientes = `
-    CREATE TABLE IF NOT EXISTS clientes
-    (
-        id serial primary key,
-        nome varchar(255) null,
-        email varchar(255) null,
-        telefone varchar(255) null
+// const sql_create_table_clientes = `
+//     CREATE TABLE IF NOT EXISTS clientes
+//     (
+//         id serial primary key,
+//         nome varchar(255) null,
+//         email varchar(255) null,
+//         telefone varchar(255) null
 
-    )
-`;
+//     )
+// `;
 
-pool.query(sql_create_table_clientes, (error, result) => {
-    if(error)
-        throw error
+// pool.query(sql_create_table_clientes, (error, result) => {
+//     if(error)
+//         throw error
     
-    console.log('Tabela criada com sucesso!');
-})
+//     console.log('Tabela criada com sucesso!');
+// })
 
-const sql_insert_cliente = `
-        INSERT INTO clientes
-            VALUES
-                ('Juan Domenick', 'juan@raizessolucoes.com.br', '3236-4156'),
-                ('André Bento', 'andre@raizessolucoes.com.br', '4002-8922')
-`;
+// /* 
+// * GET
+// * /pratos - Lista todos os pratos do banco de dados
+// * 
+// * data bd
+// * return JSON
+// */
+// server.get('/pratos', async (request, response) => {
+//     const result = await pool.query('SELECT * FROM pratos')
+//     return response.json(result.rows);
+// })
+
+
+// /* 
+// * GET
+// * /pratos/:id - Mostra o prato passado por parametro do Banco de dados
+// * 
+// * param INT :id
+// * data BD
+// * return JSON
+// */
+// server.get('/pratos/:id', async (request, response) => {
+
+//     // Dados passado como parametro
+//     var id = request.params.id;
+
+//     // Comando SQL 
+//     let sql = 'SELECT * FROM pratos p WHERE p.id = $1';
+
+//     // Executa passando o comando do SQL e o dados necessários
+//     var result = await pool.query(sql, [id]);
+
+//     return response.json(result.rows);   
+// })
+
+
+// /* 
+// * POST
+// * /pratos- Cria um novo prato no banco de dados
+// * 
+// * data BD
+// * return status
+// */
+// server.post('/pratos', async (request, response) => {
+
+//     // Dados passado no body da requisição 
+//     var nome  = request.body.nome;
+//     var tipo  = request.body.tipo;
+//     var preco = request.body.preco;
+
+//     // Comando SQL 
+//     let sql = 'INSERT INTO pratos (nome, tipo, preco) VALUES ($1, $2, $3)';
+
+//     // Executa passando o comando do SQL e o dados necessários
+//     var result = await pool.query(sql, [nome, tipo, preco]);
+
+//     return response.status(200).send();
+// })
+
+
+// /* 
+// * DELETE
+// * /pratos/:id - Deleta o prato passado por parametro do Banco de dados
+// * 
+// * param INT :id
+// * data BD
+// * return JSON
+// */
+// server.delete('/pratos/:id', async (request, response) => {
+
+//     // Dados passado como parametro
+//     var id = request.params.id;
+
+//     // Comando SQL 
+//     let sql = 'DELETE FROM pratos p WHERE p.id = $1';
+
+//     // Executa passando o comando do SQL e o dados necessários
+//     var result = await pool.query(sql, [id]);
+
+//     return response.status(200).send();   
+// })
+
+
+// /* 
+// * PUT
+// * /pratos/:id - Edita o prato passado por parametro do Banco de Dados
+// * 
+// * param INT :id
+// * data BD
+// * return status
+// */
+// server.put('/pratos/:id', async (request, response) => {
+
+//     // Dados passado como parametro
+//     var id = request.params.id;
+
+//     // Dados passado no body da requisição 
+//     var nome  = request.body.nome;
+//     var tipo  = request.body.tipo;
+//     var preco = request.body.preco;
+
+//     // Comando SQL 
+//     let sql = 'UPDATE pratos SET nome = $1, tipo = $2, preco = $3 WHERE id = $4'
+
+//     // Executa passando o comando do SQL e o dados necessários
+//     var result = await pool.query(sql, [nome, tipo, preco, id]);
+
+//     return response.status(200).send();
+// })
