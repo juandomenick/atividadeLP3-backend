@@ -122,9 +122,9 @@ server.use(express.json());
 * 
 * return HTML
 */
-server.get('/', (req, res) => {
+server.get('/', (request, response) => {
 
-    return res.send(`
+    return response.send(`
     <h3>Bem vindo ao projeto de LP3</h3>
     <h3>Menu de Lanchonete</h3>
     <p>Selecione o que voce procura:</p>
@@ -272,7 +272,7 @@ server.get('/pratos/:id', async (request, response) => {
 
 /* 
 * POST
-* /pratos- Cria um novo tipo no Array de pratos
+* /pratos- Cria um novo prato no banco de dados
 * 
 * data BD
 * return status
@@ -290,7 +290,58 @@ server.post('/pratos', async (request, response) => {
     // Executa passando o comando do SQL e o dados necessários
     var result = await pool.query(sql, [nome, tipo, preco]);
 
-    return response.status(201).send();
+    return response.status(200).send();
+})
+
+
+/* 
+* DELETE
+* /pratos/:id - Deleta o prato passado por parametro do Banco de dados
+* 
+* param INT :id
+* data BD
+* return JSON
+*/
+server.delete('/pratos/:id', async (request, response) => {
+
+    // Dados passado como parametro
+    var id = request.params.id;
+
+    // Comando SQL 
+    let sql = 'DELETE FROM pratos p WHERE p.id = $1';
+
+    // Executa passando o comando do SQL e o dados necessários
+    var result = await pool.query(sql, [id]);
+
+    return response.status(200).send();   
+})
+
+
+/* 
+* PUT
+* /pratos/:id - Edita o prato passado por parametro do Banco de Dados
+* 
+* param INT :id
+* data BD
+* return status
+*/
+server.put('/pratos/:id', async (request, response) => {
+
+    // Dados passado como parametro
+    var id = request.params.id;
+
+    // Dados passado no body da requisição 
+    var nome  = request.body.nome;
+    var tipo  = request.body.tipo;
+    var preco = request.body.preco;
+
+    // Comando SQL 
+    let sql = 'UPDATE pratos SET nome = $1, tipo = $2, preco = $3 WHERE id = $4'
+
+    // Executa passando o comando do SQL e o dados necessários
+    var result = await pool.query(sql, [nome, tipo, preco, id]);
+
+    return response.status(200).send();
 })
 
 
