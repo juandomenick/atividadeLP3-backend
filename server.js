@@ -109,15 +109,12 @@ pool.query(sql_create_table_pratos, (error, result) => {
 
 
 // Comando que permite que o corpo da requisição seja em formato JSON
-server.user(express.json());
+server.use(express.json());
 
 
-
-
-
-
-
-
+// -----------------------------------------------------------------------
+// REQUISIÇÕES HTTP - Memória Volátil (Array)
+// -----------------------------------------------------------------------
 
 /* 
 * GET
@@ -160,21 +157,6 @@ server.get('/tipos', (request, response) => {
 
 /* 
 * GET
-* /pratos - Lista todos os pratos do banco de dados
-* 
-* data bd
-* return JSON
-*/
-server.get('/pratos', async (request, response) => {
-    const result = await pool.query('SELECT * FROM pratos')
-    return response.json(result.rows);
-})
-
-
-
-
-/* 
-* GET
 * /tipos/:id - Mostra o tipo passado por parametro do Array
 * 
 * param INT :id
@@ -187,6 +169,82 @@ server.get('/tipos/:id', (request, response) => {
     const tipo = tipos.filter(t => t.id == id);
 
     return response.json(tipo);   
+})
+
+
+/* 
+* POST
+* /tipos- Cria um novo tipo no Array de tipos
+* 
+* data local
+* return status
+*/
+server.post('/tipos', (request, response) => {
+    const tipo = request.body;
+
+    tipos.push(tipo);
+
+    return response.status(201).send();
+})
+
+
+/* 
+* DELETE
+* /tipos/:id - Deleta o tipo passado por parametro do Array
+* 
+* param INT :id
+* data local
+* return status
+*/
+server.delete('/tipos/:id', (request, response) => {
+    const id = request.params.id;
+    
+    tipos = tipos.filter(p => p.id != id);
+
+    return response.status(200).send()
+})
+
+
+/* 
+* PUT
+* /tipos/:id - Deleta o tipo passado por parametro do Array
+* 
+* param INT :id
+* data local
+* return status
+*/
+// server.put('/clientes/:id', (request, response) => {
+//     const id = request.params.id;
+//     const produto = request.body;
+
+//     clientes.forEach(p => {
+
+//         if(p.id == id){
+//             p.nome = produto.nome;
+//             p.preco = produto.preco;
+//             return;
+//         }
+//     })
+
+//     return response.send();
+// })
+
+
+// -----------------------------------------------------------------------
+// REQUISIÇÕES HTTP - Banco de Dados
+// -----------------------------------------------------------------------
+
+
+/* 
+* GET
+* /pratos - Lista todos os pratos do banco de dados
+* 
+* data bd
+* return JSON
+*/
+server.get('/pratos', async (request, response) => {
+    const result = await pool.query('SELECT * FROM pratos')
+    return response.json(result.rows);
 })
 
 
@@ -215,14 +273,6 @@ server.get('/pratos/:id', (request, response) => {
 * return status
 */
 server.post('/tipos', (request, response) => {
-    const tipo = request.body;
-
-    tipos.push(tipo);
-
-    return response.status(201).send();
-})
-
-server.post('/tipos', (request, response) => {
     // Sql de inserção de cliente
     const sql_insert_cliente = `
             INSERT INTO pratos 
@@ -240,28 +290,5 @@ server.post('/tipos', (request, response) => {
 })
 
 
-// server.delete('/clientes/:id', (req, res) => {
-//     const id = req.params.id;
-    
-//     clientes = clientes.filter(p => p.id != id);
-
-//     return res.status(200).send()
-// })
-
-// server.put('/clientes/:id', (req, res) => {
-//     const id = req.params.id;
-//     const produto = req.body;
-
-//     clientes.forEach(p => {
-
-//         if(p.id == id){
-//             p.nome = produto.nome;
-//             p.preco = produto.preco;
-//             return;
-//         }
-//     })
-
-//     return res.send();
-// })
-
+// Comando que faz o express ficar ouvindo uma porta reservada para a aplicação 
 server.listen(process.env.PORT || 3000);
