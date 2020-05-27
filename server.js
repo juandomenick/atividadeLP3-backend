@@ -114,7 +114,7 @@ pool.query(sql_create_table_pratos, (error, result) => {
 server.use(express.json());
 
 // Comando que permite que o servidor use a função da biblioteca cors
-server.user(cors());
+server.use(cors());
 
 // -----------------------------------------------------------------------
 // REQUISIÇÕES HTTP - Memória Volátil (Array)
