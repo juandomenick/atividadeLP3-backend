@@ -45,6 +45,8 @@ const express = require('express');
 
 const server = express();
 
+const cors = require('cors');
+
 const Pool = require('pg').Pool
 
 const pool = new Pool({
@@ -111,6 +113,8 @@ pool.query(sql_create_table_pratos, (error, result) => {
 // Comando que permite que o corpo da requisição seja em formato JSON
 server.use(express.json());
 
+// Comando que permite que o servidor use a função da biblioteca cors
+server.user(cors());
 
 // -----------------------------------------------------------------------
 // REQUISIÇÕES HTTP - Memória Volátil (Array)
