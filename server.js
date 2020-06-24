@@ -246,7 +246,7 @@ server.put('/tipos/:id', (request, response) => {
 * return JSON
 */
 server.get('/pratos', async (request, response) => {
-    const result = await pool.query('SELECT p.id, p.nome, p.tipo, TRUNC(p.preco, 2) AS preco FROM pratos p ')
+    const result = await pool.query('SELECT p.id, p.nome, p.tipo, TRUNC(p.preco, 2) AS preco FROM pratos p ORDER BY p.id ASC')
     return response.json(result.rows);
 })
 
